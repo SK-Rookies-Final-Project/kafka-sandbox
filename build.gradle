@@ -1,0 +1,50 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.5.5'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.sk_rookies'
+version = '0.0.1-SNAPSHOT'
+description = 'kafka-sandbox'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+ext {
+    confluentVer = '7.6.0' // 스키마 레지스트리 클라이언트
+}
+
+repositories {
+    mavenCentral()
+    // ★ Confluent 아티팩트용 저장소
+    maven { url 'https://packages.confluent.io/maven/' }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    // Kafka Admin/Client
+    implementation 'org.apache.kafka:kafka-clients:3.7.0'
+
+    // Confluent Schema Registry (Avro)
+    implementation "io.confluent:kafka-schema-registry-client:${confluentVer}"
+    implementation "io.confluent:kafka-avro-serializer:${confluentVer}"
+    // (JSON Schema 쓸 거면) implementation "io.confluent:kafka-json-schema-serializer:${confluentVer}"
+    // (Protobuf면) implementation "io.confluent:kafka-protobuf-serializer:${confluentVer}"
+
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
