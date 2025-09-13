@@ -12,6 +12,9 @@ import org.apache.kafka.clients.admin.TopicDescription;
 import java.util.List;
 import java.util.Map;
 
+import com.sk_rookies.kafkasandbox.consumer.ConsumerGroupService;
+import com.sk_rookies.kafkasandbox.consumer.ConsumerGroupService.GroupSummary;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
@@ -19,6 +22,7 @@ public class KafkaAdminController {
 
     private final TopicService topicService;
     private final SchemaService schemaService;
+    private final ConsumerGroupService consumerGroupService;
 
     // === 토픽 생성 ===
     @PostMapping("/topics")
@@ -100,6 +104,38 @@ public class KafkaAdminController {
                     "version", meta.getVersion(),
                     "schema", meta.getSchema()
             ));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+
+    // --- 컨슈머 그룹 목록 ---
+    @GetMapping("/consumer-groups")
+    public ResponseEntity<?> listConsumerGroups() {
+        try {
+            return ResponseEntity.ok(consumerGroupService.listGroups());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    // --- 컨슈머 그룹 요약 ---
+    @GetMapping("/consumer-groups/summary")
+    public ResponseEntity<?> listCgSummary() {
+        try {
+            return ResponseEntity.ok(consumerGroupService.listSummaries());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    // --- 특정 컨슈머 그룹 삭제 ---
+    @DeleteMapping("/consumer-groups/{groupId}")
+    public ResponseEntity<?> deleteGroup(@PathVariable String groupId) {
+        try {
+            consumerGroupService.deleteGroup(groupId);
+            return ResponseEntity.ok("Deleted group: " + groupId);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
