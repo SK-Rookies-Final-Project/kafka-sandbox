@@ -43,6 +43,8 @@ dependencies {
     // (Protobuf면) implementation "io.confluent:kafka-protobuf-serializer:${confluentVer}"
 
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 }
 
 tasks.named('test') {
